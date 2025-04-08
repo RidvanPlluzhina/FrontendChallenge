@@ -26,7 +26,7 @@ st.markdown("""
     }
     .nav-item-active {
         background-color: #4e8cff;
-        color: white;
+        color: black;
     }
     .nav-item:hover:not(.nav-item-active) {
         background-color: #e0e0e0;
@@ -34,7 +34,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.title('Webcam Locations 🗺️📷')
+st.title('Webcam Locations 🗺️ 📷')
 
 # Define navigation options
 nav_options = ["Map View", "Table View", "Image Gallery"]
@@ -46,17 +46,10 @@ for i, option in enumerate(nav_options):
         if 'nav_selection' not in st.session_state:
             st.session_state.nav_selection = "Map View"  # Default view
         
-        if st.session_state.nav_selection == option:
-            st.markdown(f"""
-            <div class="horizontal-nav">
-                <div class="nav-item nav-item-active">{option}</div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            # Create a clickable navigation item
-            if st.button(option, key=f"nav_{option}"):
-                st.session_state.nav_selection = option
-                st.rerun()
+        # Create a clickable navigation item
+        if st.button(option, key=f"nav_{option}"):
+            st.session_state.nav_selection = option
+            st.rerun()
 
 @st.cache_data(ttl=3600)
 def fetch_webcam_data():

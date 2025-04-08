@@ -39,7 +39,7 @@ def show_gallery_view(df_coords):
     
     for i, (_, row) in enumerate(display_subset.iterrows()):
         with cols[i % 3]:
-            st.image(row['image'], caption=row['title'], use_column_width=True)
+            st.image(row['image'], caption=row['title'], use_container_width=True)
             with st.expander("Location Details"):
                 st.write(f"**Language:** {row['language']}")
                 st.write(f"**Coordinates:** {row['lat']:.4f}, {row['lon']:.4f}")
