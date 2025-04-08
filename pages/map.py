@@ -1,4 +1,3 @@
-
 import streamlit as st
 import requests
 import pandas as pd
@@ -47,8 +46,6 @@ try:
     if coords:
         df_coords = pd.DataFrame(coords)
 
-        # === MAP AFTER ===
-        # Define Pydeck Layer
         layer = pdk.Layer(
             "ScatterplotLayer",
             data=df_coords,
@@ -71,17 +68,23 @@ try:
             pitch=0
         )
 
-        # Render deck.gl map
+        tooltip = {
+            "html": "<b>{title}</b><br><img src='{image}' width='200'>",
+            "style": {
+                "backgroundColor": "steelblue",
+                "color": "white"
+            }
+        }
+
         r = pdk.Deck(
             map_style='mapbox://styles/mapbox/light-v9',
             layers=[layer],
             initial_view_state=view_state,
-            tooltip={"text": "{title}"}
+            tooltip=tooltip
         )
 
         st.subheader('Webcam Map')
         st.pydeck_chart(r)
-
 
     else:
         st.warning('No webcams with coordinates and images found.')
