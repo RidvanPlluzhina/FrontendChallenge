@@ -7,56 +7,6 @@ from gallery_view import show_gallery_view
 
 st.set_page_config(layout="wide")  # Use full width of the screen
 
-# Custom CSS for horizontal navigation
-st.markdown("""
-<style>
-    .horizontal-nav {
-        display: flex;
-        justify-content: space-around;
-        background-color: #f0f2f6;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
-    .nav-item {
-        text-align: center;
-        padding: 10px 20px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .nav-item-active {
-        background-color: #4e8cff;
-        color: white;
-    }
-    .nav-item:hover:not(.nav-item-active) {
-        background-color: #e0e0e0;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-st.title('Webcam Locations 🗺️📷')
-
-# Define navigation options
-nav_options = ["Map View", "Table View", "Image Gallery"]
-
-# Create horizontal navigation bar
-cols = st.columns(len(nav_options))
-for i, option in enumerate(nav_options):
-    with cols[i]:
-        if 'nav_selection' not in st.session_state:
-            st.session_state.nav_selection = "Map View"  # Default view
-        
-        if st.session_state.nav_selection == option:
-            st.markdown(f"""
-            <div class="horizontal-nav">
-                <div class="nav-item nav-item-active">{option}</div>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            # Create a clickable navigation item
-            if st.button(option, key=f"nav_{option}"):
-                st.session_state.nav_selection = option
-                st.rerun()
 
 @st.cache_data(ttl=3600)
 def fetch_webcam_data():
@@ -97,16 +47,66 @@ try:
     if coords:
         df_coords = pd.DataFrame(coords)
 
-        # Display content based on navigation selection
-        if st.session_state.nav_selection == "Map View":
-            show_map_view(df_coords)
-        elif st.session_state.nav_selection == "Table View":
-            show_table_view(df_coords)
-        elif st.session_state.nav_selection == "Image Gallery":
-            show_gallery_view(df_coords)
+        st.subheader('Webcam Table')
+    
+        # Add search functionality
+        search_term = st.text_input("Search webcams", "")
+        if search_term:
+            filtered_df = df_coords[df_coords['title'].str.contains(search_term, case=False)]
+        else:
+            filtered_df = df_coords
+            
+        # Display the table with pagination
+        page_size = 50  # Show 50 rows at a time
+        total_pages = (len(filtered_df) - 1) // page_size + 1
+        
+        col1, col2, col3 = st.columns([1, 3, 1])
+        with col2:
+            if 'current_page' not in st.session_state:
+                st.session_state.current_page = 1
+            
+            page = st.slider("Page", 1, max(1, total_pages), st.session_state.current_page)
+            st.session_state.current_page = page
+            
+        start_idx = (page - 1) * page_size
+        end_idx = min(start_idx + page_size, len(filtered_df))
+        
+        # Display the paginated table
+        st.dataframe(
+            filtered_df.iloc[start_idx:end_idx][['title', 'language', 'lat', 'lon']],
+            hide_index=True,
+            use_container_width=True
+        )
+        
+        st.write(f"Showing {start_idx+1}-{end_idx} of {len(filtered_df)} webcams")
+        
+        # Add export functionality
+        if st.button("Export as CSV"):
+            csv = filtered_df.to_csv(index=False)
+            st.download_button(
+                label="Download CSV",
+                data=csv,
+                file_name="webcams.csv",
+                mime="text/csv"
+            )
+        
+        # Select and display a webcam image
+        if not filtered_df.empty:
+            st.subheader("Preview Selected Webcam")
+            selected_title = st.selectbox("Choose a webcam", filtered_df['title'])
+            selected_row = filtered_df[filtered_df['title'] == selected_title].iloc[0]
+            
+            col1, col2 = st.columns([2, 1])
+            with col1:
+                st.image(selected_row['image'], caption=selected_title, use_container_width=True)
+            with col2:
+                st.write(f"**Title:** {selected_row['title']}")
+                st.write(f"**Language:** {selected_row['language']}")
+                st.write(f"**Latitude:** {selected_row['lat']}")
+                st.write(f"**Longitude:** {selected_row['lon']}")
 
-    else:
-        st.warning('No webcams with coordinates and images found.')
+        else:
+            st.warning('No webcams with coordinates and images found.')
 
 except requests.exceptions.RequestException as e:
     st.error(f"Error fetching data: {e}")

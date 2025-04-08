@@ -42,7 +42,7 @@ def process_webcam_data(data):
         "Webcams with Image Gallery": webcams_with_gallery,
         "Webcams without Image Gallery": webcams_without_gallery,
         "Valid Webcam URLs": valid_urls,
-        "Invalid Webcam URLs (404)": invalid_urls,
+        "Urls not present": invalid_urls,
     }
 
     return sanity_check_data
