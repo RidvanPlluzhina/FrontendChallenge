@@ -1,16 +1,16 @@
-# webcam_map_clickable_cached.py
+# webcam_map_clickable_table.py
 
 import streamlit as st
 import requests
 import pandas as pd
 import pydeck as pdk
 
-st.title('Clickable Webcam Map 🗺️📷')
+st.title('Webcam Locations 🗺️📷')
 
 # Caching the data fetching
-@st.cache_data(ttl=3600)  # cache for 1 hour
+@st.cache_data(ttl=3600)
 def fetch_webcam_data():
-    url = "https://tourism.api.opendatahub.com/v1/WebcamInfo?pagesize=1000&removenullvalues=false&getasidarray=false"
+    url = "https://tourism.api.opendatahub.com/v1/WebcamInfo?pagesize=2000&removenullvalues=false&getasidarray=false"
     response = requests.get(url)
     response.raise_for_status()
     return response.json()
@@ -27,6 +27,9 @@ try:
     for webcam in webcams:
         gps_info = webcam.get('GpsInfo')
         image_gallery = webcam.get('ImageGallery')
+        detail = webcam.get('Detail', {})
+        lang_info = next(iter(detail.values()), {})  # first language (e.g., 'de')
+        language = lang_info.get('Language', 'unknown')
 
         if gps_info and image_gallery:
             position = gps_info[0]
@@ -37,20 +40,26 @@ try:
 
             if lat and lon and img_url:
                 coords.append({
+                    'title': title,
+                    'language': language,
                     'lat': lat,
                     'lon': lon,
-                    'title': title,
                     'image': img_url
                 })
 
     if coords:
         df_coords = pd.DataFrame(coords)
 
+        # === TABLE FIRST ===
+        st.subheader('Webcam Table')
+        st.dataframe(df_coords[['title', 'language', 'lat', 'lon']])
+
+        # === MAP AFTER ===
         # Define Pydeck Layer
         layer = pdk.Layer(
             "ScatterplotLayer",
             data=df_coords,
-            pickable=True,  # enable clicking
+            pickable=True,
             opacity=0.8,
             filled=True,
             radius_scale=50,
@@ -77,7 +86,7 @@ try:
             tooltip={"text": "{title}"}
         )
 
-        # Display the map
+        st.subheader('Webcam Map')
         st.pydeck_chart(r)
 
         # Webcam selection
