@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
+import altair as alt
 
 
 @st.cache_data(ttl=3600)
@@ -49,14 +50,34 @@ def main():
     data = fetch_webcam_data()
     summary = process_webcam_data(data)
 
-    df = pd.DataFrame.from_dict(summary, orient='index', columns=["Count"])
+    df = pd.DataFrame.from_dict(summary, orient='index', columns=["Count"]).reset_index()
+    df.columns = ["Metric", "Count"]
 
-    st.subheader("Summary Chart")
-    st.bar_chart(df)
+    # Define custom colors
+    def get_color(metric):
+        if metric in ["Without Gallery", "Invalid URLs"]:
+            return "red"
+        else:
+            return "green"
 
-    # Optional: also show the data as a table
-    with st.expander("Show Data Table"):
-        st.dataframe(df)
+    df["Color"] = df["Metric"].apply(get_color)
+
+    # Altair chart
+    chart = alt.Chart(df).mark_bar().encode(
+        x=alt.X("Metric", sort=None),
+        y="Count",
+        color=alt.Color("Color", scale=None),
+        tooltip=["Metric", "Count"]
+    ).properties(
+        width=600,
+        height=400
+    )
+
+    st.altair_chart(chart, use_container_width=True)
+
+    # Optional table view
+    with st.expander("📋 Show Data Table"):
+        st.dataframe(df[["Metric", "Count"]])
 
 if __name__ == "__main__":
     main()
