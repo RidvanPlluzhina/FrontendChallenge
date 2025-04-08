@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
 import requests
-from map_view import show_map_view
-from table_view import show_table_view
-from gallery_view import show_gallery_view
 
 st.set_page_config(layout="wide")  # Use full width of the screen
 
