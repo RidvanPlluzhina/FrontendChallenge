@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="Webcam Inspector", layout="wide")
+st.set_page_config(page_title="Webcam Inspector", layout="wide", page_icon=":material/camera_video:")
 
 home_page = st.Page(
     "pages/home.py",
