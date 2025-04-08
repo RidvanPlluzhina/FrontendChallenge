@@ -59,7 +59,7 @@ def show_table_view(df_coords):
         
         col1, col2 = st.columns([2, 1])
         with col1:
-            st.image(selected_row['image'], caption=selected_title, use_column_width=True)
+            st.image(selected_row['image'], caption=selected_title, use_container_width=True)
         with col2:
             st.write(f"**Title:** {selected_row['title']}")
             st.write(f"**Language:** {selected_row['language']}")
