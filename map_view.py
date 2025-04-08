@@ -48,6 +48,9 @@ def show_map_view(df_coords):
         tooltip=tooltip
     )
 
+    # Add instructions for users
+    st.info("👆 Hover over a point on the map to view the webcam image")
+
     st.subheader('Webcam Map')
     st.pydeck_chart(r)
     
@@ -58,5 +61,5 @@ def show_map_view(df_coords):
     with col2:
         st.write(f"**Average Coordinates:** ({df_coords['lat'].mean():.4f}, {df_coords['lon'].mean():.4f})")
         
-    # Add instructions for users
-    st.info("👆 Hover over a point on the map to view the webcam image")
+    # # Add instructions for users
+    # st.info("👆 Hover over a point on the map to view the webcam image")
