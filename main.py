@@ -62,7 +62,8 @@ try:
         selected_row = df_coords[df_coords['title'] == selected_title].iloc[0]
         selected_img = selected_row['image']
 
-        st.image(selected_img, caption=selected_title, use_column_width=True)
+        st.image(selected_img, caption=selected_title, use_container_width=True)
+
         
     else:
         st.warning('No webcams with coordinates and images found.')
