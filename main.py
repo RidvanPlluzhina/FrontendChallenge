@@ -1,9 +1,9 @@
-
 import streamlit as st
 import requests
 import pandas as pd
 import pydeck as pdk
 
+st.set_page_config(layout="wide")  # Use full width of the screen
 st.title('Webcam Locations 🗺️📷')
 
 @st.cache_data(ttl=3600)
@@ -13,11 +13,8 @@ def fetch_webcam_data():
     response.raise_for_status()
     return response.json()
 
-# st.write('Fetching webcam data...')
-
 try:
     data = fetch_webcam_data()
-
     webcams = data.get('Items', [])
 
     coords = []
@@ -48,23 +45,22 @@ try:
     if coords:
         df_coords = pd.DataFrame(coords)
 
-        # === TABLE FIRST ===
+        # === Responsive Styled Table ===
         st.subheader('Webcam Table')
-        st.dataframe(df_coords[['title', 'language', 'lat', 'lon']], hide_index=True)
+        styled_df = df_coords[['title', 'language', 'lat', 'lon']].style.set_properties(**{
+            'text-overflow': 'ellipsis',
+            'overflow': 'hidden',
+            'white-space': 'nowrap'
+        })
+        st.dataframe(styled_df, hide_index=True)
 
         # Webcam selection
         st.subheader("Select a webcam to view the image:")
-
-        selected_title = st.selectbox(
-            "Choose a webcam", df_coords['title']
-        )
-
+        selected_title = st.selectbox("Choose a webcam", df_coords['title'])
         selected_row = df_coords[df_coords['title'] == selected_title].iloc[0]
         selected_img = selected_row['image']
-
         st.image(selected_img, caption=selected_title, use_container_width=True)
 
-        
     else:
         st.warning('No webcams with coordinates and images found.')
 
