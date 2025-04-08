@@ -60,7 +60,6 @@ try:
             get_fill_color='[200, 30, 0, 160]'
         )
 
-        # Set initial view state
         view_state = pdk.ViewState(
             latitude=df_coords['lat'].mean(),
             longitude=df_coords['lon'].mean(),
