@@ -13,8 +13,8 @@ A lightweight Streamlit application to explore real-time webcam data from South 
 
 ### 1. Clone the Repository
 
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/RidvanPlluzhina/WebcamVisualizer.git
+cd WebcamVisualizer
 
 ### 2. Install Dependencies
 
