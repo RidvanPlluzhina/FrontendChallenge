@@ -39,9 +39,17 @@ def show_gallery_view(df_coords):
     
     for i, (_, row) in enumerate(display_subset.iterrows()):
         with cols[i % 3]:
-            st.image(row['image'], caption=row['title'], use_container_width=True)
+            st.image(row['image'], caption=row['title'], use_column_width=True)
             with st.expander("Location Details"):
                 st.write(f"**Language:** {row['language']}")
                 st.write(f"**Coordinates:** {row['lat']:.4f}, {row['lon']:.4f}")
+                
+                # Add a "View on Map" link that switches to map view and centers on this webcam
+                if st.button(f"View on Map", key=f"map_btn_{i}"):
+                    # Store coordinates to center map on this webcam when switching to map view
+                    st.session_state.center_lat = row['lat']
+                    st.session_state.center_lon = row['lon']
+                    st.session_state.nav_selection = "Map View"
+                    st.rerun()
     
     st.write(f"Showing {start_idx+1}-{end_idx} of {len(display_df)} webcams")

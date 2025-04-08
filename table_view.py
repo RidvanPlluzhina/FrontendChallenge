@@ -50,3 +50,18 @@ def show_table_view(df_coords):
             file_name="webcams.csv",
             mime="text/csv"
         )
+    
+    # Select and display a webcam image
+    if not filtered_df.empty:
+        st.subheader("Preview Selected Webcam")
+        selected_title = st.selectbox("Choose a webcam", filtered_df['title'])
+        selected_row = filtered_df[filtered_df['title'] == selected_title].iloc[0]
+        
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            st.image(selected_row['image'], caption=selected_title, use_column_width=True)
+        with col2:
+            st.write(f"**Title:** {selected_row['title']}")
+            st.write(f"**Language:** {selected_row['language']}")
+            st.write(f"**Latitude:** {selected_row['lat']}")
+            st.write(f"**Longitude:** {selected_row['lon']}")
