@@ -1,18 +1,37 @@
-# 📷 FrontendChallenge - Webcam Viewer
+# 📸 Webcam Viewer 
 
-A simple Web Page app to display webcams (mock or real) in a clean and user-friendly interface.
+A lightweight Streamlit application to explore real-time webcam data from South Tyrol via the Open Data Hub API.
 
-## 🛠️ Technologies
+## 🔧 Features
 
-- React
-- Vite
-- JavaScript
-- Inline CSS / UI library (e.g., Material UI or Tailwind if used)
+- Browse webcam data in a clean, responsive table  
+- View live webcam images  
+- Select webcams from a dropdown menu  
+- View webcam locations on an interactive map 🗺️  
 
-## 📦 Installation
+## 🚀 Getting Started
 
-Clone the project and run the following commands:
+### 1. Clone the Repository
 
-```bash
-npm install
-npm run dev
+git clone https://github.com/your-username/your-repo-name.git
+cd your-repo-name
+
+### 2. Install Dependencies
+
+pip install -r requirements.txt
+
+### 3. Run the App
+
+streamlit run main.py
+
+## 📦 Requirements
+- streamlit
+- pandas
+- requests
+- (Already included in requirements.txt)
+
+## 👥 Contributors
+- Sam,
+- Michele,
+- Enri,
+- Ridvan
